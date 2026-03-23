@@ -1,4 +1,4 @@
-name: CI - API Node
+name: CI/CD - API Node
 
 on:
   push:
@@ -7,8 +7,12 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-check-and-docker:
+  build-check-and-publish:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - name: Checkout do código
@@ -39,5 +43,15 @@ jobs:
       - name: Testar users
         run: curl http://localhost:3000/users
 
+      - name: Fazer login no GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build da imagem Docker
-        run: docker build -t api-node-simples .
+        run: docker build -t ghcr.io/oaleffemanuel/projeto-1-api-docker:latest .
+
+      - name: Publicar imagem no GHCR
+        run: docker push ghcr.io/oaleffemanuel/projeto-1-api-docker:latest
