@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-and-check:
+  build-check-and-docker:
     runs-on: ubuntu-latest
 
     steps:
@@ -38,3 +38,6 @@ jobs:
 
       - name: Testar users
         run: curl http://localhost:3000/users
+
+      - name: Build da imagem Docker
+        run: docker build -t api-node-simples .
